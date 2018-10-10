@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -15,32 +16,40 @@ import (
 // Data - Setting File Struct
 type Data struct {
 	Targets []Target `yaml:"targets"`
-	Slacks  []Slack  `yaml:"slacks"`
+	Slack   Slack    `yaml:"slack"`
 }
 
 // Target - Cert Check Target Struct
 type Target struct {
 	Name      string `yaml:"name"`
 	Endpoint  string `yaml:"endpoint"`
-	SlackNo   int    `yaml:"slackno"`
 	Threshold int    `yaml:"threshold"`
+	URL       string `yaml:"hook_url"`
+	Channel   string `yaml:"channel"`
+	Username  string `yaml:"username"`
+	Icon      string `yaml:"icon"`
 }
 
 // Slack - Notify Setting Struct
 type Slack struct {
-	No       int    `yaml:"no"`
-	URL      string `yaml:"url"`
+	URL      string `yaml:"hook_url"`
+	Channel  string `yaml:"channel"`
 	Username string `yaml:"username"`
+	Icon     string `yaml:"icon"`
 }
 
 // SlackJSON - Slack Properties
 type SlackJSON struct {
-	Text     string `json:"text"`
+	Channel  string `json:"channel"`
 	Username string `json:"username"`
+	Text     string `json:"text"`
+	Icon     string `json:"icon_emoji"`
 }
 
 func main() {
-	buf, err := ioutil.ReadFile("certcheck.yml")
+	filename := flag.String("c", "certcheck.yml", "config file name")
+	flag.Parse()
+	buf, err := ioutil.ReadFile(*filename)
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -55,7 +64,7 @@ func main() {
 		if checkParam(key, tgt) {
 			message, result := getAPI(tgt.Endpoint, tgt.Threshold)
 			if result {
-				postSlack(d.Slacks, message, tgt.SlackNo)
+				postSlack(d.Slack, tgt, message)
 			}
 			log.Printf(message)
 		}
@@ -70,10 +79,6 @@ func checkParam(key int, tgt Target) bool {
 	}
 	if tgt.Endpoint == "" {
 		log.Printf("endpoint is empty. (key: %d): tgt.Endpoint", key)
-		result = false
-	}
-	if tgt.SlackNo < 0 {
-		log.Printf("slackno is less than 0. (key: %d): tgt.Endpoint", key)
 		result = false
 	}
 	if tgt.Threshold < 0 {
@@ -113,34 +118,49 @@ func getAPI(endpoint string, threshold int) (string, bool) {
 	return message, result
 }
 
-func postSlack(slacks []Slack, message string, slackNo int) bool {
-	for _, slack := range slacks {
-		if slack.No == slackNo {
-			if slack.URL == "" {
-				log.Printf("slack URL is empty. (key: %d)", slackNo)
-				return false
-			} else if slack.Username == "" {
-				log.Printf("slack Username is empty. (key: %d)", slackNo)
-				return false
-			}
-			params, _ := json.Marshal(SlackJSON{
-				message,
-				slack.Username})
-			resp, err := http.PostForm(
-				slack.URL,
-				url.Values{"payload": {string(params)}},
-			)
-			if err != nil {
-				log.Fatal(err)
-				return false
-			}
-			defer resp.Body.Close()
-			_, err = ioutil.ReadAll(resp.Body)
-			if err != nil {
-				log.Fatal(err)
-				return false
-			}
-		}
+func postSlack(slack Slack, tgt Target, message string) bool {
+	slackProperties := SlackJSON{}
+	// Channel
+	if slack.Channel != "" {
+		slackProperties.Channel = slack.Channel
+	}
+	if tgt.Channel != "" {
+		slackProperties.Channel = tgt.Channel
+	}
+	// Username
+	if slack.Username != "" {
+		slackProperties.Username = slack.Username
+	}
+	if tgt.Username != "" {
+		slackProperties.Username = tgt.Username
+	}
+	// Text
+	slackProperties.Text = message
+	// Icon
+	if slack.Icon != "" {
+		slackProperties.Icon = slack.Icon
+	}
+	if tgt.Icon != "" {
+		slackProperties.Icon = tgt.Icon
+	}
+	params, _ := json.Marshal(slackProperties)
+	var slackURL = slack.URL
+	if tgt.URL != "" {
+		slackURL = tgt.URL
+	}
+	resp, err := http.PostForm(
+		slackURL,
+		url.Values{"payload": {string(params)}},
+	)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+	defer resp.Body.Close()
+	_, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+		return false
 	}
 	return true
 }

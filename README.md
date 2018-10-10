@@ -26,33 +26,33 @@
 
   また、残日数が指定日数より少ない場合には、Slackに通知されます。
 
+#### 引数
+
+| 引数名 | 説明 | 例 |
+| :-: | --- | --- |
+| c | 設定ファイルを指定することができます。 | certcheck -c="config.yml" |
+
 ## 設定ファイル
 
 [certcheck.yml.format](certcheck.yml.format) を参考に **certcheck.yml** ファイルを作成してください。
 
-* フォーマットと定義例
+なお、`targets`でslackの設定(`hook_url`, `username`, `icon`)を指定した場合は、`slack`の設定を上書きします。
+
+* フォーマット
 
 ```yml
 targets:
-  -
-    name: (分かりやすい名称)
-    endpoint: (調べるURL)
-    slackno: (slackの通知先 / slacksで定義しているnoを指定してください)
-    threshold: (slackに通知する残日数)
-  -
-    name: xxxx
-    endpoint: https://google.com
-    slackno: 1
-    threshold: 15
-slacks:
-  -
-    name: (一意の番号)
-    url: (slackの Incomming WebHooks で発行した Webhook URL)
-    username: (slackの通知で表示するユーザ名)
-  -
-    name: 1
-    url: https://hooks.slack.com/services/xxx/yyy/zzz
-    username: certcheck
+  - name:       (分かりやすい名称)
+    endpoint:   (調べるURL)
+    threshold:  (slackに通知する残日数)
+    hook_url:   (slackのIncomming WebHooksで発行したWebhook URL / 上書き項目)
+    username:   (slackの通知で表示するユーザ名 / 上書き項目)
+    icon:       (slackの通知で表示するアイコン / 上書き項目)
+slack:
+  hook_url:     (slackのIncomming WebHooksで発行したWebhook URL)
+  channel:      (slackの通知で投稿するチャンネル)
+  username:     (slackの通知で表示するユーザ名)
+  icon:         (slackの通知で表示するアイコン)
 ```
 
 ## ライセンス
