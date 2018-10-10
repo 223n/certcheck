@@ -107,10 +107,11 @@ func getAPI(endpoint string, threshold int) (string, bool) {
 			expireJSTTime := expireUTCTime.In(time.FixedZone("Asia/Tokyo", 9*60*60))
 			expire = expireJSTTime.Format("2006/01/02 15:04")
 			th := time.Now().AddDate(0, 0, threshold)
+			since := int(expireJSTTime.Sub(time.Now()).Hours() / 24)
 			if !th.Before(expireJSTTime) {
-				message = fmt.Sprintf("Warning (expire=%s): %s", expire, endpoint)
+				message = fmt.Sprintf("Cert Warning: %s expire: %s at %d days", expire, endpoint, since)
 			} else {
-				message = fmt.Sprintf("OK (expire=%s): %s", expire, endpoint)
+				message = fmt.Sprintf("Cert OK: %s expire: %s at %d days", expire, endpoint, since)
 				result = false
 			}
 		}
