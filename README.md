@@ -1,28 +1,24 @@
-certcheck
-=====================
+# certcheck
 
 [![GitHub](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-なにするもの？
----------------------
+## なにするもの？
 
 1. 証明書の有効期限を確認します。
 2. 残日数が指定された日数以下の場合には、Slackに通知します。
 
-使い方
----------------------
+## 使い方
 
-### 1. インストール
+### インストール
 
   [releases](https://github.com/223n/certcheck/releases)から、実行ファイルをダウンロードします。
 
-### 2. 設定ファイルの作成
+### 設定ファイルの作成
 
-  1.でダウンロードした実行ファイルと同じディレクトリに、
-
+  ダウンロードした実行ファイルと同じディレクトリに、
   設定ファイルを作成、配置します。
 
-### 3. 起動
+### 起動
 
   実行ファイルを起動します。
 
@@ -30,8 +26,7 @@ certcheck
 
   また、残日数が指定日数より少ない場合には、Slackに通知されます。
 
-設定ファイル
----------------------
+## 設定ファイル
 
 [certcheck.yml.format](certcheck.yml.format) を参考に **certcheck.yml** ファイルを作成してください。
 
@@ -60,11 +55,12 @@ slacks:
     username: certcheck
 ```
 
-ライセンス
----------------------
+## ライセンス
 
 このソースのライセンスは、 [LICENSE](LICENSE) を参照してください。
 
-このソースは、 [ynozue/apichecker](https://github.com/ynozue/apichecker) を引用しています。
+### その他
 
-[ynozue/apichecker](https://github.com/ynozue/apichecker) のライセンスは、 [こちら](https://github.com/ynozue/apichecker/blob/master/LICENSE) を参照してください。
+このソースの一部は、 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0) のライセンスで配布されている成果物を含んでいます。
+
+* [ynozue/apichecker](https://github.com/ynozue/apichecker) / Copyright (C) 2017 ynozue
