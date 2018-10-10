@@ -83,6 +83,11 @@ func checkParam(key int, tgt Target) bool {
 	return result
 }
 
+/**
+ *  Portions are:
+ *    Copyright (C) 2017 ynozue (https://github.com/ynozue)
+ *    Originally under Apache License Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ **/
 func getAPI(endpoint string, threshold int) (string, bool) {
 	var message = ""
 	var result = true
