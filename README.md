@@ -26,6 +26,12 @@
 
   また、残日数が指定日数より少ない場合には、Slackに通知されます。
 
+#### 引数
+
+| 引数名 | 説明 | 例 |
+| :-: | --- | --- |
+| c | 設定ファイルを指定することができます。 | certcheck -c="config.yml" |
+
 ## 設定ファイル
 
 [certcheck.yml.format](certcheck.yml.format) を参考に **certcheck.yml** ファイルを作成してください。
