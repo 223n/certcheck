@@ -1,0 +1,11 @@
+targets:
+  -
+    name: google
+    endpoint: https://google.com
+    slackno: 1
+    threshold: 15
+slacks:
+  -
+    no: 1
+    url: https://hooks.slack.com/services/<value1>/<value2>/<value3>
+    username: certcheck
