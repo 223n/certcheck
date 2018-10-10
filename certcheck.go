@@ -8,17 +8,9 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"runtime"
 	"time"
 
 	yaml "gopkg.in/yaml.v2"
-)
-
-var (
-	// Version - certcheck version
-	Version = "1.2.0"
-	// Revision - revision version
-	Revision = "4"
 )
 
 // Data - Setting File Struct
@@ -56,38 +48,27 @@ type SlackJSON struct {
 
 func main() {
 	filename := flag.String("c", "certcheck.yml", "config file name")
-	isVersion1 := flag.Bool("v", false, "prints current version")
-	isVersion2 := flag.Bool("version", false, "prints current version")
 	flag.Parse()
-
-	if *isVersion1 || *isVersion2 {
-		log.Printf(getVersion())
-	} else {
-		buf, err := ioutil.ReadFile(*filename)
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
-		var d Data
-		err = yaml.Unmarshal(buf, &d)
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
-		for key, tgt := range d.Targets {
-			if checkParam(key, tgt) {
-				message, result := getAPI(tgt.Endpoint, tgt.Threshold)
-				if result {
-					postSlack(d.Slack, tgt, message)
-				}
-				log.Printf(message)
+	buf, err := ioutil.ReadFile(*filename)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	var d Data
+	err = yaml.Unmarshal(buf, &d)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	for key, tgt := range d.Targets {
+		if checkParam(key, tgt) {
+			message, result := getAPI(tgt.Endpoint, tgt.Threshold)
+			if result {
+				postSlack(d.Slack, tgt, message)
 			}
+			log.Printf(message)
 		}
 	}
-}
-
-func getVersion() string {
-	return fmt.Sprintf("%s %s/%s, build %s", Version, runtime.GOOS, runtime.GOARCH, Revision)
 }
 
 func checkParam(key int, tgt Target) bool {
