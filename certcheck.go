@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -46,7 +47,9 @@ type SlackJSON struct {
 }
 
 func main() {
-	buf, err := ioutil.ReadFile("certcheck.yml")
+	filename := flag.String("c", "certcheck.yml", "config file name")
+	flag.Parse()
+	buf, err := ioutil.ReadFile(*filename)
 	if err != nil {
 		log.Fatal(err)
 		return
