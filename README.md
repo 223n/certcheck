@@ -1,6 +1,6 @@
 # certcheck
 
-[![GitHub](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![GitHub](https://img.shields.io/badge/license-Apache%20Version%202.0-blue.svg)](LICENSE)
 
 ## なにするもの？
 
