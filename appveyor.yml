@@ -29,5 +29,6 @@ build_script:
   - cd c:\certcheck
   - go get gopkg.in/yaml.v2
   - go build -o ${env:FILENAME}
+  - dir
 artifacts:
   - path: '.\certcheck_*'
