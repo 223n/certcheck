@@ -5,15 +5,15 @@ environment:
   - GOOS: windows
     GOARCH: amd64
     FILENAME: certcheck_windows_amd64.exe
-#  - GOOS: windows
-#    GOARCH: 386
-#    FILENAME: certcheck_windows_386.exe
-#  - GOOS: linux
-#    GOARCH: amd64
-#    FILENAME: certcheck_linux_amd64
-#  - GOOS: linux
-#    GOARCH: 386
-#    FILENAME: certcheck_linux_386
+  - GOOS: windows
+    GOARCH: 386
+    FILENAME: certcheck_windows_386.exe
+  - GOOS: linux
+    GOARCH: amd64
+    FILENAME: certcheck_linux_amd64
+  - GOOS: linux
+    GOARCH: 386
+    FILENAME: certcheck_linux_386
 install:
   - go version
   - go env
