@@ -32,4 +32,4 @@ build_script:
       if (Test-Path .\certcheck.exe -PathType Leaf) { Rename-Item .\certcheck.exe -newName %_FILENAME% }
       if (Test-Path .\certcheck     -PathType Leaf) { Rename-Item .\certcheck     -newName %_FILENAME% }
 artifacts:
-  - path: 'c:\certcheck\' + %_FILENAME%
+  - path: 'c:\certcheck\*'
