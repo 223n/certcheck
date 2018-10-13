@@ -26,6 +26,7 @@ before_build:
   - set GOARCH=%_GOARCH%
 build_script:
   - cd c:\certcheck
+  - go get gopkg.in/yaml.v2
   - go build
   - if exist c:\certcheck\certcheck.exe ren c:\certcheck\certcheck %FILENAME%
   - if exist c:\certcheck\certcheck ren c:\certcheck\certcheck %FILENAME%
