@@ -10,9 +10,12 @@ environment:
     GOARCH: 386
   - GOOS: linux
     GOARCH: amd64
-build_script:
+install:
+  - go get gopkg.in/yaml.v2
   - set PATH=%PATH%;%GOPATH%\bin
-  - go build github.com/golang/dep/dep/cmd/dep
-  - for /f "" %%G in ('go list github.com/golang/dep/...') do ( go test %%G & IF ERRORLEVEL == 1 EXIT 1)
+before_build:
+  - set GOOS=%_GOOS%
+  - set GOARCH=%_GOARCH%
+build_script:
   - dep ensure
   - go build
