@@ -1,0 +1,36 @@
+clone_folder: c:\certcheck
+environment:
+  GOPATH: c:\gopath
+  matrix:
+  - GOOS: windows
+    GOARCH: amd64
+    FILENAME: certcheck_windows_amd64.exe
+  - GOOS: windows
+    GOARCH: 386
+    FILENAME: certcheck_windows_386.exe
+  - GOOS: linux
+    GOARCH: amd64
+    FILENAME: certcheck_linux_amd64
+  - GOOS: linux
+    GOARCH: 386
+    FILENAME: certcheck_linux_386
+install:
+  - go version
+  - go env
+  - set PATH=%PATH%;%GOPATH%\bin
+  - go get gopkg.in/yaml.v2
+  - ps: |
+      $(Get-Content -Encoding UTF8 "c:\certcheck\certcheck.go").Replace("{version}","1.2.3").Replace("{revision}","${env:APPVEYOR_BUILD_VERSION}") | Out-File -Encoding UTF8 "c:\certcheck\certcheck.go";
+before_build:
+  - set GOOS=%_GOOS%
+  - set GOARCH=%_GOARCH%
+  - set FILENAME=%_FILENAME%
+build_script:
+  - cd c:\certcheck
+  - go get gopkg.in/yaml.v2
+  - go build
+  - ps: |
+      if (Test-Path .\certcheck.exe -PathType Any) { Rename-Item .\certcheck.exe -newName ${env:FILENAME} }
+      if (Test-Path .\certcheck     -PathType Any) { Rename-Item .\certcheck     -newName ${env:FILENAME} }
+artifacts:
+  - path: '.\certcheck_*'

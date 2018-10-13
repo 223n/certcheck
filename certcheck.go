@@ -16,9 +16,9 @@ import (
 
 var (
 	// Version - certcheck version
-	Version = "1.2.2"
+	Version = "{version}"
 	// Revision - revision version
-	Revision = "6"
+	Revision = "{revision}"
 )
 
 // Data - Setting File Struct
