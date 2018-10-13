@@ -19,14 +19,14 @@ install:
   - go env
   - set PATH=%PATH%;%GOPATH%\bin
   - go get gopkg.in/yaml.v2
-  #- ps: |
-  #    $(Get-Content "c:\certcheck\certcheck.go" -Raw).Replace("{version}","1.2.3").Replace("{revision}","${env:APPVEYOR_BUILD_VERSION}") | Out-File "c:\certcheck\certcheck.go";
+  - ps: |
+      $(Get-Content "c:\certcheck\certcheck.go" -Raw).Replace("{version}","1.2.3").Replace("{revision}","${env:APPVEYOR_BUILD_VERSION}") | Out-File "c:\certcheck\certcheck.go";
 before_build:
   - set GOOS=%_GOOS%
   - set GOARCH=%_GOARCH%
 build_script:
   - cd c:\certcheck
-  - go build certcheck.go
+  - go build
   - ren c:\certcheck\certcheck %FILENAME%
 artifacts:
   - path: 'c:\certcheck\certcheck_windows_386.exe'
