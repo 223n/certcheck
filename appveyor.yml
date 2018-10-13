@@ -15,8 +15,9 @@ environment:
     GOARCH: amd64
     FILENAME: certcheck_linux_amd64
 install:
+  - set PATH=%PATH%;%GOPATH%\bin
+  - go get gopkg.in/yaml.v2
   - ps: |
-      go get gopkg.in/yaml.v2
       $(Get-Content "c:\users\appveyor\certcheck\certcheck.go") -replace "{version}","1.2.3" -replace "${revision}","${env:APPVEYOR_BUILD_VERSION}" > "c:\users\appveyor\certcheck\certcheck.go"
 before_build:
   - set GOOS=%_GOOS%
