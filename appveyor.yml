@@ -26,7 +26,8 @@ before_build:
   - set GOOS=%_GOOS%
   - set GOARCH=%_GOARCH%
 build_script:
-  - go build c:\certcheck\certcheck.go
+  - cd c:\certcheck
+  - go build certcheck.go
   - ren c:\certcheck\certcheck %FILENAME%
 artifacts:
   - path: 'c:\certcheck\certcheck_windows_386.exe'
