@@ -30,7 +30,7 @@ build_script:
   - go get gopkg.in/yaml.v2
   - go build
   - ps: |
-      if (Test-Path .\certcheck.exe -PathType Leaf) { Rename-Item .\certcheck.exe -newName %FILENAME% }
-      if (Test-Path .\certcheck     -PathType Leaf) { Rename-Item .\certcheck     -newName %FILENAME% }
+      if (Test-Path .\certcheck.exe -PathType Leaf) { Rename-Item .\certcheck.exe -newName ${env:FILENAME} }
+      if (Test-Path .\certcheck     -PathType Leaf) { Rename-Item .\certcheck     -newName ${env:FILENAME} }
 artifacts:
   - path: '.\certcheck.*'
