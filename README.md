@@ -1,6 +1,7 @@
 # certcheck
 
 [![GitHub](https://img.shields.io/badge/license-Apache%20Version%202.0-blue.svg)](LICENSE)
+[![Build status](https://ci.appveyor.com/api/projects/status/l0eca8g8n600u4a1/branch/master?svg=true)](https://ci.appveyor.com/project/223n/certcheck/branch/master)
 
 ## なにするもの？
 
