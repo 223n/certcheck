@@ -12,8 +12,8 @@ permissions:
   contents: read
 
 jobs:
-  check:
-    name: Check
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,6 +34,9 @@ jobs:
 
       - name: go vet
         run: go vet ./...
+
+      - name: go test
+        run: go test -race -cover ./...
 
   build:
     name: Build (${{ matrix.goos }}/${{ matrix.goarch }})
