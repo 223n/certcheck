@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"runtime"
 	"time"
 
-	yaml "gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v3"
 )
 
 var (
@@ -61,9 +62,9 @@ func main() {
 	flag.Parse()
 
 	if *isVersion1 || *isVersion2 {
-		log.Printf(getVersion())
+		log.Print(getVersion())
 	} else {
-		buf, err := ioutil.ReadFile(*filename)
+		buf, err := os.ReadFile(*filename)
 		if err != nil {
 			log.Fatal(err)
 			return
@@ -80,7 +81,7 @@ func main() {
 				if result {
 					postSlack(d.Slack, tgt, message)
 				}
-				log.Printf(message)
+				log.Print(message)
 			}
 		}
 	}
@@ -121,12 +122,12 @@ func getAPI(endpoint string, threshold int) (string, bool) {
 	} else {
 		defer resp.Body.Close()
 		expire := "-"
-		if len(resp.TLS.PeerCertificates) > 0 {
+		if resp.TLS != nil && len(resp.TLS.PeerCertificates) > 0 {
 			expireUTCTime := resp.TLS.PeerCertificates[0].NotAfter
 			expireJSTTime := expireUTCTime.In(time.FixedZone("Asia/Tokyo", 9*60*60))
 			expire = expireJSTTime.Format("2006/01/02 15:04")
 			th := time.Now().AddDate(0, 0, threshold)
-			since := int(expireJSTTime.Sub(time.Now()).Hours() / 24)
+			since := int(time.Until(expireJSTTime).Hours() / 24)
 			if !th.Before(expireJSTTime) {
 				message = fmt.Sprintf("Cert Warning: %s expire: %s at %d days", endpoint, expire, since)
 			} else {
@@ -177,7 +178,7 @@ func postSlack(slack Slack, tgt Target, message string) bool {
 		return false
 	}
 	defer resp.Body.Close()
-	_, err = ioutil.ReadAll(resp.Body)
+	_, err = io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
 		return false
