@@ -1,7 +1,7 @@
 # certcheck
 
 [![GitHub](https://img.shields.io/badge/license-Apache%20Version%202.0-blue.svg)](LICENSE)
-[![Build status](https://ci.appveyor.com/api/projects/status/l0eca8g8n600u4a1/branch/master?svg=true)](https://ci.appveyor.com/project/223n/certcheck/branch/master)
+[![CI](https://github.com/223n/certcheck/actions/workflows/ci.yml/badge.svg)](https://github.com/223n/certcheck/actions/workflows/ci.yml)
 
 ## なにするもの？
 
@@ -56,6 +56,19 @@ slack:
   username:     (slackの通知で表示するユーザ名)
   icon:         (slackの通知で表示するアイコン)
 ```
+
+## 開発
+
+### CI
+
+  master への push と pull request で、`gofmt` / `go vet` と各プラットフォーム向けのビルドを実行します。
+
+### リリース
+
+  GitHub の Actions タブから **Release** ワークフローを手動実行し、`version` にタグ名 (例: `v1.3.0`) を指定します。
+  タグの作成、リリースノートの生成、実行ファイルの添付までを自動で行います。
+
+  なお、配布している実行ファイルにコード署名は行っていません。
 
 ## ライセンス
 
