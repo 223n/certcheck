@@ -10,4 +10,10 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# Build artifacts
+/certcheck
+certcheck_*
+
+# Local configuration
 certcheck.yml
