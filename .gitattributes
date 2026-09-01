@@ -1,0 +1,8 @@
+# Normalize line endings
+*.go   text eol=lf
+*.yml  text eol=lf
+*.mod  text eol=lf
+*.sum  text eol=lf
+
+# Windows batch files require CRLF
+*.bat  text eol=crlf
