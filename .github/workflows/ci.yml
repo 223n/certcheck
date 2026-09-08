@@ -7,6 +7,12 @@ on:
   pull_request:
     branches:
       - master
+  schedule:
+    # Weekly. Nothing here depends on a push: newly published vulnerabilities
+    # and tests that rot with the calendar both need a run that happens on its
+    # own. GitHub disables a schedule after 60 days without repository
+    # activity, so a quiet period stops these runs rather than hiding them.
+    - cron: "0 0 * * 1"
 
 permissions:
   contents: read
@@ -37,6 +43,23 @@ jobs:
 
       - name: go test
         run: go test -race -cover ./...
+
+  vuln:
+    name: Vulnerability scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      # The version is pinned so a new release cannot change what runs in CI
+      # without a commit. The vulnerability database is still fetched at run
+      # time, so pinning does not stale the findings.
+      - name: govulncheck
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.7.0 ./...
 
   build:
     name: Build (${{ matrix.goos }}/${{ matrix.goarch }})

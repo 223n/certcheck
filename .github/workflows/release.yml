@@ -40,9 +40,31 @@ jobs:
           fi
           echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
 
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go test
+        run: go test -race -cover ./...
+
+      - name: govulncheck
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.7.0 ./...
+
   build:
     name: Build (${{ matrix.goos }}/${{ matrix.goarch }})
-    needs: prepare
+    needs:
+      - prepare
+      - test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -98,6 +120,11 @@ jobs:
         with:
           path: dist
           merge-multiple: true
+
+      # certcheck_* rather than * so the checksum file cannot list itself.
+      - name: Generate checksums
+        working-directory: dist
+        run: sha256sum certcheck_* > SHA256SUMS
 
       - name: Create tag and release
         env:
