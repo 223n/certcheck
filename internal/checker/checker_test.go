@@ -19,9 +19,15 @@ import (
 	"github.com/223n/certcheck/internal/checker"
 )
 
-// now is the fixed instant every test reasons about. Certificates are issued
+// now is the instant every test reasons about. Certificates are issued
 // relative to it, so the remaining days are deterministic.
-var now = time.Date(2026, time.September, 1, 12, 0, 0, 0, time.UTC)
+//
+// It has to track the real clock rather than be a fixed literal: newTLSServer
+// hands the certificate to a client that validates it against the real clock,
+// so a literal in the past would expire every certificate the table builds and
+// fail the suite on a date nobody changed anything on. Truncating to the hour
+// keeps the arithmetic on whole hours.
+var now = time.Now().UTC().Truncate(time.Hour)
 
 // newTLSServer starts an HTTPS server presenting a throwaway certificate that
 // expires at notAfter, and returns a client that trusts it.
@@ -76,8 +82,12 @@ func newTLSServer(t *testing.T, notAfter time.Time) (*httptest.Server, *http.Cli
 func TestCheck(t *testing.T) {
 	t.Parallel()
 
+	// A real certificate rarely expires on a whole-day boundary, so plusHours
+	// shifts the expiry part way into a day. DaysLeft truncates those hours
+	// away, and Expiring has to agree with the number that gets reported.
 	tests := map[string]struct {
 		daysUntilExpiry int
+		plusHours       int
 		threshold       int
 		wantExpiring    bool
 		wantDaysLeft    int
@@ -106,6 +116,27 @@ func TestCheck(t *testing.T) {
 			wantExpiring:    false,
 			wantDaysLeft:    16,
 		},
+		"on the threshold with hours to spare": {
+			daysUntilExpiry: 15,
+			plusHours:       12,
+			threshold:       15,
+			wantExpiring:    true,
+			wantDaysLeft:    15,
+		},
+		"one day past the threshold with hours to spare": {
+			daysUntilExpiry: 16,
+			plusHours:       12,
+			threshold:       15,
+			wantExpiring:    false,
+			wantDaysLeft:    16,
+		},
+		"hours short of the next whole day": {
+			daysUntilExpiry: 14,
+			plusHours:       23,
+			threshold:       15,
+			wantExpiring:    true,
+			wantDaysLeft:    14,
+		},
 		"zero threshold only warns once expired": {
 			daysUntilExpiry: 1,
 			threshold:       0,
@@ -118,7 +149,8 @@ func TestCheck(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			notAfter := now.AddDate(0, 0, tt.daysUntilExpiry)
+			notAfter := now.AddDate(0, 0, tt.daysUntilExpiry).
+				Add(time.Duration(tt.plusHours) * time.Hour)
 			srv, client := newTLSServer(t, notAfter)
 
 			c := checker.New(

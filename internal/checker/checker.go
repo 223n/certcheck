@@ -113,10 +113,14 @@ func (c *Checker) Check(ctx context.Context, endpoint string, thresholdDays int)
 
 	now := c.now()
 	expiresAt := resp.TLS.PeerCertificates[0].NotAfter.In(c.loc)
+	// Expiring is derived from DaysLeft rather than from expiresAt directly, so
+	// the number certcheck reports and the decision to warn can never disagree
+	// for a certificate that expires part way through a day.
+	daysLeft := int(expiresAt.Sub(now).Hours() / 24)
 	return Result{
 		Endpoint:  endpoint,
 		ExpiresAt: expiresAt,
-		DaysLeft:  int(expiresAt.Sub(now).Hours() / 24),
-		Expiring:  !now.AddDate(0, 0, thresholdDays).Before(expiresAt),
+		DaysLeft:  daysLeft,
+		Expiring:  daysLeft <= thresholdDays,
 	}, nil
 }
