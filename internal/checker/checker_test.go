@@ -137,11 +137,20 @@ func TestCheck(t *testing.T) {
 			wantExpiring:    true,
 			wantDaysLeft:    14,
 		},
-		"zero threshold only warns once expired": {
+		"zero threshold stays quiet with a whole day left": {
 			daysUntilExpiry: 1,
 			threshold:       0,
 			wantExpiring:    false,
 			wantDaysLeft:    1,
+		},
+		// threshold 0 は README が既定値と書いている値なので、境界を固定して
+		// おく。残日数の表示が 0 になった時点で通知する、という意味になる。
+		"zero threshold warns inside the last day": {
+			daysUntilExpiry: 0,
+			plusHours:       23,
+			threshold:       0,
+			wantExpiring:    true,
+			wantDaysLeft:    0,
 		},
 	}
 
