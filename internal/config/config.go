@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"os"
 
-	yaml "gopkg.in/yaml.v3"
+	yaml "go.yaml.in/yaml/v3"
 )
 
 // Config is the whole content of a certcheck configuration file.
